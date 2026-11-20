@@ -1,0 +1,127 @@
+def obtener_tareas():
+    """
+    Inicializa y retorna una lista de ejemplo con tareas
+
+    parametros:
+        Ninguno.
+
+    Retorna:
+        list: Lista de diccionarios, cada uno con las keys
+        "descripcion" (str) y "completada" (bool).. 
+    """
+    lista_tareas = [
+        {"descripcion": "Comprar leche", "completada": False},
+        {"descripcion": "Hacer ejercicio", "completada": True},
+        {"descripcion": "Llamar al médico", "completada": False},
+    ]
+    return lista_tareas
+
+
+def mostrar_tareas(lista_tareas):
+    """
+    Muestra las tareas numeradas, indicando si están completadas.
+
+    Parámetros:
+        lista_tareas (list): Lista de diccionarios con las tareas.
+
+    Retorna:
+        None: Solo imprime en pantalla.
+    """
+    for posicion, tarea in enumerate(lista_tareas, start=1):
+        # [X] si la tarea es ta completada, [ ] si está pendiente
+        marca = "[X]" if tarea["completada"] else "[ ]"
+        print(f"{posicion}. {marca} {tarea['descripcion']}")
+
+
+def agregar_tarea(lista_tareas, descripcion):
+    """
+    Agrega una nueva tarea pendiente a la lista.
+
+    Parámetros:
+        lista_tareas (list): Lista de diccionarios con las tareas.
+        descripcion (str): Descripción de la nueva tarea.
+
+    Retorna:
+        list: La lista de tareas modificada
+    """
+    nueva_tarea = {"descripcion": descripcion, "completada": False}
+    lista_tareas.append(nueva_tarea)
+    return lista_tareas
+
+
+def marcar_completada(lista_tareas, posicion):
+    """
+    Marca como completada la tarea en la posición indicada.
+
+    Parámetros:
+        lista_tareas (list): Lista de diccionarios con las tareas.
+        posicion (int): Número de la tarea (empezando en 1).
+
+    Retorna:
+        None: Modifica directamente la lista original.
+    """
+    try:
+        indice = posicion - 1
+        # Los índices negativos son válidos en Python, así que se rechazan aquí
+        if indice < 0:
+            raise IndexError
+        lista_tareas[indice]["completada"] = True
+        print(f"¡Tarea '{lista_tareas[indice]['descripcion']}' marcada como completada!")
+    except IndexError:
+        print("Error: la posición ingresada no existe.")
+
+
+def contar_tareas_pendientes(lista_tareas, indice=0):
+    """
+    Cuenta de forma recursiva las tareas pendientes.
+
+    Parámetros:
+        lista_tareas (list): Lista de diccionarios con las tareas.
+        indice (int): Posición actual que se evalúa (por defecto 0).
+
+    Retorna:
+        int: Número total de tareas pendientes.
+    """
+    # Caso base....se recorrió toda la lista
+    if indice == len(lista_tareas):
+        return 0
+
+    # caso recursivo: si la tarea estta pendiente suma 1 y avanza al siguiente indice
+    if not lista_tareas[indice]["completada"]:
+        return 1 + contar_tareas_pendientes(lista_tareas, indice + 1)
+
+    # Si está completada, solo avanza al siguiente índice
+    return contar_tareas_pendientes(lista_tareas, indice + 1)
+
+
+# flujo principal
+lista_tareas = obtener_tareas()
+
+print("--- Gestor de Tareas Pendientes ---")
+print("1. Ver todas las tareas")
+print("2. Agregar nueva tarea")
+print("3. Marcar tarea como completada")
+print("4. Mostrar total de tareas pendientes")
+print("5. Salir")
+
+opcion = ""
+while opcion != "5":
+    opcion = input("Elige una opción: ")
+
+    if opcion == "1":
+        mostrar_tareas(lista_tareas)
+    elif opcion == "2":
+        descripcion = input("Describe la nueva tarea: ")
+        lista_tareas = agregar_tarea(lista_tareas, descripcion)
+        print("¡Tarea agregada!")
+    elif opcion == "3":
+        posicion = int(input("Número de la tarea a marcar como completada: "))
+        marcar_completada(lista_tareas, posicion)
+    elif opcion == "4":
+        total = contar_tareas_pendientes(lista_tareas)
+        print(f"Total de tareas pendientes: {total}")
+    elif opcion == "5":
+        print("¡Hasta luego!")
+    else:
+        print("Opción no válida.")
+    print()
